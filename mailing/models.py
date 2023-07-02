@@ -5,10 +5,10 @@ class Client(models.Model):
     # Клиент сервиса: контактный email, фио, комментарий
     name = models.CharField(max_length=100, verbose_name='ФИО')
     email = models.EmailField(verbose_name='Почта')
-    comment = models.CharField(max_length=200, verbose_name='Комментарий')
+    comment = models.TextField(verbose_name='Комментарий')
 
     def __str__(self):
-        return f'Клиент {self.name}'
+        return f'Клиент: {self.name}'
 
     class Meta:
         verbose_name = 'Клиент'
@@ -19,15 +19,15 @@ class Client(models.Model):
 class Message(models.Model):
     # Сообщение для рассылки (тема письма, тело письма)
 
-    title = models.CharField(max_length=250)
-    body = models.TextField
+    title = models.CharField(max_length=250, verbose_name='Тема')
+    body = models.TextField(verbose_name='Сообщение', default=None)
 
     def __str__(self):
-        return f'Сообщение: {self.title}'
+        return f'Тема сообщения: {self.title}'
 
     class Meta:
-        verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
         ordering = ('title',)
 
 
@@ -44,7 +44,7 @@ class Mailing(models.Model):
         ONCE_A_WEEK = 'WE', 'Once a week'
         ONCE_A_MONTH = 'MO', 'Once a month'
 
-    time = models.TimeField(verbose_name='Время рассылки', null=False, blank=False)
+    time = models.TimeField(verbose_name='Время начала рассылки (ч:м:с)', null=False, blank=False)
     frequency = models.CharField(max_length=2,
                                  choices=Frequency.choices,
                                  default=Frequency.ONCE_A_DAY,
@@ -59,10 +59,10 @@ class Mailing(models.Model):
     # с Клиентами - многие ко многим (в рассылку могут входить несколько клиентов, клиент может быть в разных рассылках)
     # и Сообщениями - один ко многим (сообщение может входить во много рассылок, в рассылке - одно сообщение)
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение', null=False, blank=False)
-    clients = models.ManyToManyField(Client, verbose_name='Клиенты', null=False, blank=False)
+    clients = models.ManyToManyField(Client, verbose_name='Клиенты', blank=True)
 
-    # def __str__(self):
-    #     return f'Клиент {self.name}'
+    def __str__(self):
+        return f'Рассылка в: {self.time}'
 
     class Meta:
         verbose_name = 'Рассылка'
@@ -73,7 +73,7 @@ class Mailing(models.Model):
 class MailingAttempt(models.Model):
     # Попытка рассылки (дата и время последней попытки, статус попытки, ответ почтового сервера)
 
-    class Status(models.TextChoices):  # периодичность (раз в день, раз в неделю, раз в месяц)
+    class Status(models.TextChoices):  # статус (активная, завершенная)
         ACTIVE = 'AC', 'Active'
         COMPLETED = 'CO', 'Completed'
 

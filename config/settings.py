@@ -138,4 +138,13 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'django-test-alex77bel@yandex.ru'
 EMAIL_HOST_PASSWORD = 'nqlxykqluoiwvzwd'
 EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
+
+
+
+# EMAIL_HOST_USER = 'alex77bel@yandex.ru'
+# EMAIL_HOST_PASSWORD = 'cmbxsupbbisswxwe'
 
